@@ -1,0 +1,31 @@
+#wrapper {
+  margin: 0;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+#gamespace {
+  max-width: 960px;
+  margin: 0 auto;
+  background-color: beige;
+  padding: 140px 0;
+}
+
+#gameboard {
+  max-width: 610px;
+  max-height: 610px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#gameboard .inner {
+  margin-left: auto;
+  border: 1px solid red;
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  width: 200px;
+  height: 200px;
+  font-size: 72px;
+  text-align: center;
+}
