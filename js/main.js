@@ -6,8 +6,16 @@
   maxMoves: 0,
   currentPlayer: '',
   gameOver: false,
-  player1: { piece: 'X' },
-  player2: { piece: 'O' },
+  player1: { 
+    name: 'Player 1',
+    piece: 'fas fa-times',
+    color: 'rgb(255, 153, 0)',
+  },
+  player2: {
+    name: 'Player 2',
+    piece: 'far fa-circle',
+    color: 'rgb(0, 153, 51)',
+  },
 
   initialiseGame: function ( rows, cols ) {
     for ( let row = 1; row <= this.rows; row++ ) {
@@ -90,31 +98,76 @@
   }
 }
 
-const drawInitialBoard = function () {
-  let $gameboard = $('#gameboard');
+const drawInitialBoard = function ( params ) {
+  // Function expects arguments as an object in the format:
+  // drawInitialBoard ( { tilesize: 140, tilespacing: 5, numCols: 3 })
+  const tilesize = parseInt(params.tilesize);
+  const tilespacing = parseInt(params.tilespacing);
+  const numCols = parseInt(params.numCols);
+  const heightWidth = ( tilesize * numCols ) + ( tilespacing * 2 * numCols );
+  const $gameboard = $('#gameboard');
+
+  // Set gameboard height and width
+  $gameboard.css({
+    'height': `${ heightWidth }px`,
+    'width': `${ heightWidth }px`
+  });
+
+  // Set message div height and width --- this is an overlay of the gameboard
+  const $message = $('#message');
+  const paddingTop = ( heightWidth / 2 ) - 60;
+  const paddingLeftRight = 30;
+  $message.css({ 
+    'height': `${ heightWidth - paddingTop }px`,
+    'padding': `${ paddingTop }px ${ paddingLeftRight }px 0`,
+    'width': `${ heightWidth - ( paddingLeftRight * 2 ) }px`
+  });
+    
   for ( i = 1; i <= tictactoe.rows; i++ ) {    
     for ( j = 1; j <= tictactoe.cols; j++ ) {
-      $gameboard.append(`<div class="inner" id="inner${ i }-${ j }" row="${ i }" col="${ j }"></div>`);
+      let tileId = `tile${ i }-${ j }`;
+      $gameboard.append(`<div class='tile' id='${ tileId }' row='${ i }' col='${ j }'></div>`);
+
+      // Add the span that will contain the played piece icon
+      $('#' + tileId).append(`<span class='icon'></span>`);
     }
   }
+
+  // Set width, height and margin of each tile
+  const $tiles = $('.tile');
+  $tiles.css({
+    'height': `${ tilesize }px`,
+    'width': `${ tilesize }px`,
+    'margin': `${ tilespacing }px`,
+    'font-size': `${ tilesize * 0.5 }px`
+  });
+
+  const $icons = $('.icon');
+  $icons.css({ 'margin-top': `${ tilesize * 0.5 / 2}px`});
 }
 
 const clickHandler = function () {
-  const clickedSquare = event.srcElement.id;
-  const row = $('#' + clickedSquare).attr('row');
-  const col = $('#' + clickedSquare).attr('col');
+  const clickedSquareId = event.srcElement.id
+  const $clickedSquare = $('#' + clickedSquareId);
+  const row = $clickedSquare.attr('row');
+  const col = $clickedSquare.attr('col');
   const playerPiece = tictactoe[tictactoe.currentPlayer].piece;
 
   if( tictactoe.playerMove ( row, col, playerPiece )) {
-    $('#' + clickedSquare).html('<p>' + playerPiece + '</p>');
+    const $icon = $('#' + clickedSquareId + ' .icon');
+    $icon.addClass( playerPiece );
+
+    const playerColor = tictactoe[tictactoe.currentPlayer].color;
+    $clickedSquare.css({ 'background-color': playerColor });
+        
     if( tictactoe.checkForWin( playerPiece )) {
-      // $('#gamemessage').text('WINNER');
-      // $('#gamemessage').text(`${ tictactoe.currentPlayer } has WON the game`);
-      $('#gameboard').append(`<p class="winner">${ tictactoe.currentPlayer } has WON the game</p>`);
+      $('#message').css({ 'display': 'inline' });
+      $('#message').text(`${ tictactoe[tictactoe.currentPlayer].name } has won the game`);
       tictactoe.gameOver = true;
       return true;
     } else if ( tictactoe.isGameDrawn()) {
-      $('#gameboard').append(`<p class="winner">The game has ended in a draw</p>`);
+      $('#message').css({ 'display': 'inline' });
+      $('#message').text('The game is a draw');
       tictactoe.gameOver = true;
       return true;
     }
@@ -123,10 +176,13 @@ const clickHandler = function () {
 }
 
 $(function() {
+  const tilesize = 150;
+  const tilespacing = 5;
+
   tictactoe.initialiseGame();
-  drawInitialBoard();
+  drawInitialBoard({ tilesize: tilesize, tilespacing: tilespacing, numCols: tictactoe.cols });
   tictactoe.currentPlayer = 'player1';
   tictactoe.gameOver = false;
 
-  $('.inner').on('click', clickHandler)
+  $('.tile').on('click', clickHandler)
 });

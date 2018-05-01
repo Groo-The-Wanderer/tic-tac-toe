@@ -1,31 +1,39 @@
 #wrapper {
   margin: 0;
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 #gamespace {
   max-width: 960px;
   margin: 0 auto;
-  background-color: beige;
   padding: 140px 0;
 }
 
 #gameboard {
-  max-width: 610px;
-  max-height: 610px;
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
+  text-align: center;
 }
 
-#gameboard .inner {
-  margin-left: auto;
-  border: 1px solid red;
-  display: inline-block;
-  position: relative;
-  vertical-align: middle;
-  width: 200px;
-  height: 200px;
-  font-size: 72px;
-  text-align: center;
+#gameboard .tile {
+  font-family: 'FontAwesome';
+  color: black;
+  border-radius: 20px;
+  background-color: rgb(153, 204, 255);
+}
+
+#gameboard .tile:hover {
+  background-color: rgb(85, 90, 104);
+}
+
+#message {
+  position: absolute;
+  display: none;
+  z-index: 10;
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.85);
+  font-size: 40px;
+  font-weight: 500;
+  color: rgb(44, 62, 80);
 }
