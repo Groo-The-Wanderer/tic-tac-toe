@@ -1,33 +1,93 @@
-#wrapper {
+body { 
+  height: 100%;
+  padding: 0;
   margin: 0;
-  font-family: 'Open Sans', sans-serif;
+}
+
+#wrapper {
+  position: relative;
+  font-family: 'Lato', sans-serif;
+  height: 100%;
+}
+
+header {
+  height: 100px;
+  width: 100%;
+  background-color: rgb(26, 37,47);
+}
+
+h1 {
+  margin: 0 50px;
+  padding-top: 23px;
+  /* margin-top: 0px; */
+  width: 600px;
+  text-align: left;
+  font-size: 2.4em;
+  color: white;
+  height: 77px;
+}
+
+h5 {
+  margin-top: 25px;
+  margin-bottom: 5px;
+  /* color: rgb(104, 104, 104); */
+  color: rgb(85, 85, 85);
+  font-size: 1em;
 }
 
 #gamespace {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 140px 0;
+  width: 480px;
+  height: 100%;
+  margin-top: 0px;
+  margin-bottom: 24px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#gameheader {
+  width: 60%;
+  height: 16px;
+  margin-left: 15px;
+  margin-bottom: 10px;
 }
 
 #gameboard {
+  width: 480px;
+  height: 480px;
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
   text-align: center;
 }
 
-#gameboard .tile {
-  font-family: 'FontAwesome';
-  color: black;
+.tile {
   border-radius: 20px;
   background-color: rgb(153, 204, 255);
 }
 
-#gameboard .tile:hover {
+.tile:hover {
   background-color: rgb(85, 90, 104);
 }
 
-#message {
+/* .tile:before {
+  font-family: 'Font Awesome\ 5 Free';
+  content: '\f111';
+  font-weight: 400;
+  font-style: normal;
+  position: absolute;
+  display: block;
+  opacity: 0;
+}
+
+.tile:hover:before {
+  opacity: 1;
+} */
+
+.icon {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, .2);
+}
+
+#gameendmessage {
   position: absolute;
   display: none;
   z-index: 10;
@@ -37,3 +97,59 @@
   font-weight: 500;
   color: rgb(44, 62, 80);
 }
+
+#gamerestart {
+  background-color: rgb(100, 100, 100);
+  border: 1px solid rgb(100, 100, 100);
+  color: white;
+  font-size: 16px;
+  border-radius: 5px;
+  text-align: center;
+  width: 100px;
+  height: 35px;
+  margin-left: 10px;
+  margin-top: 10px;
+  outline: none;
+}
+
+#gamerestart:hover {
+  background-color: white; /* Green */
+  color: rgb(100, 100, 100);
+}
+
+footer {
+  position: absolute;
+  height: 80px;
+  width: 100%;
+  background-color: rgb(192, 57, 43);
+  color: white;
+}
+
+footer p {
+  margin-top: 13px;
+  margin-left: 25px;
+  margin-bottom: 0;
+  font-size: 1.2em;
+  width: 225px;
+}
+
+#byline {
+  font-size: 1em;
+  color: rgb(146, 145, 145);
+  margin-top: 2px;
+  margin-left: 25px;
+  width: 218px;
+  background-color: white;
+  height: 22px;
+  padding-left: 2px;
+  padding-top: 2px;
+  padding: 2px;
+}
+
+footer img {
+  width: 20px;
+  height: 20px;
+  float: left;
+  padding-right: 2px;
+}
+

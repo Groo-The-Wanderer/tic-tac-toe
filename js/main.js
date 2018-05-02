@@ -26,11 +26,11 @@
     }
     this.numMoves = 0;
     this.maxMoves = this.rows * this.cols;
-  },
+  }, // END initialiseGame
 
   alreadyFilled: function ( row, col ) {
     return this[row][col] != '';
-  },
+  }, // END alreadyFilled
 
   playerMove: function ( row, col, piece ) {
     if ( !this.gameOver ) {
@@ -41,112 +41,76 @@
       }
       return false;
     }
-  },
+  }, // END playerMove
 
   isGameDrawn: function () {
     return this.numMoves === this.maxMoves;
-  },
+  }, // END isGameDrawn
   
-  checkForWin: function ( piece ) {
-    let winCount = 0;
+  checkForWin: function ( row, col, piece ) {
+    let rowCount = 0;
+    let colCount = 0;
+    let diagCount = 0;
+    let revDiagCount = 0;
+    let winCount = this.neededToWin;
 
-    // Check each row
-    for ( let row = 1; row <= this.rows; row++ ) {
-      winCount = 0;
-
-      for ( let col = 1; col <= this.cols; col++ ) {
-        winCount += this[row][col] === piece ? 1 : 0;
-        
-        if ( winCount === this.neededToWin ) {
-          return true;
-        }
-      } 
-    }
-
-    // Check each col
-    for ( let col = 1; col <= this.cols; col++ ) {
-      winCount = 0;
-      for ( let row = 1; row <= this.rows; row++ ) {
-        winCount += this[row][col] === piece ? 1 : 0;
-        
-        if ( winCount === this.neededToWin ) {
-          return true;
-        }
-      } 
-    }
+    for ( let i = 1; i <= this.cols; i++ ) {
+      rowCount += this[row][i] === piece ? 1 : 0;
+      colCount += this[i][col] === piece ? 1 : 0;
+      diagCount += this[i][i] === piece ? 1 : 0;
+      revDiagCount += this[i][winCount - i + 1] === piece ? 1 : 0;
     
-    // Check diagonal left to right
-    winCount = 0;
-    for ( let col = 1; col <= this.cols; col++ ) {
-      for ( let row = 1; row <= this.rows; row++ ) {
-        if ( col === row ) {          
-          winCount += this[row][col] === piece ? 1 : 0;
-        }
-        
-        if ( winCount === this.neededToWin ) {
-          return true;
-        }
-      } 
+      if (( rowCount === winCount ) || ( colCount === winCount ) || ( diagCount === winCount ) || ( revDiagCount === winCount )) {
+        return true;
+      }
     }
-
-    // Check diagonal right to right
-    if ( this[1][3] === piece && this[2][2] === piece && this[3][1] === piece ){
-      return true;
-    }
-    
     return false;
-  }
-}
+  }, // END checkForWin
+ }
 
-const drawInitialBoard = function ( params ) {
-  // Function expects arguments as an object in the format:
-  // drawInitialBoard ( { tilesize: 140, tilespacing: 5, numCols: 3 })
-  const tilesize = parseInt(params.tilesize);
-  const tilespacing = parseInt(params.tilespacing);
-  const numCols = parseInt(params.numCols);
-  const heightWidth = ( tilesize * numCols ) + ( tilespacing * 2 * numCols );
+const drawInitialBoard = function ( numRows, numCols ) {
   const $gameboard = $('#gameboard');
+  const gameboardWidth = parseInt($gameboard.width());
+  const tileSpacing = 5;
+  const tileSize = ( gameboardWidth / numCols ) - ( tileSpacing * 2 );
 
-  // Set gameboard height and width
-  $gameboard.css({
-    'height': `${ heightWidth }px`,
-    'width': `${ heightWidth }px`
-  });
+  // Set header message
+  $('#gameheader > h5').text(`Match ${ tictactoe.neededToWin } in a row to win`);
 
   // Set message div height and width --- this is an overlay of the gameboard
-  const $message = $('#message');
-  const paddingTop = ( heightWidth / 2 ) - 60;
+  const $endmessage = $('#gameendmessage');
+  const paddingTop = ( gameboardWidth / 2 ) - 60;
   const paddingLeftRight = 30;
-  $message.css({ 
-    'height': `${ heightWidth - paddingTop }px`,
+  $endmessage.css({ 
+    'height': `${ gameboardWidth - paddingTop }px`,
     'padding': `${ paddingTop }px ${ paddingLeftRight }px 0`,
-    'width': `${ heightWidth - ( paddingLeftRight * 2 ) }px`
+    'width': `${ gameboardWidth - ( paddingLeftRight * 2 ) }px`
   });
     
-  for ( i = 1; i <= tictactoe.rows; i++ ) {    
-    for ( j = 1; j <= tictactoe.cols; j++ ) {
+  for ( i = 1; i <= numRows; i++ ) {    
+    for ( j = 1; j <= numCols; j++ ) {
       let tileId = `tile${ i }-${ j }`;
       $gameboard.append(`<div class='tile' id='${ tileId }' row='${ i }' col='${ j }'></div>`);
 
-      // Add the span that will contain the played piece icon
-      $('#' + tileId).append(`<span class='icon'></span>`);
+      // Add the div that will contain the played piece icon
+      $('#' + tileId).append(`<div class='icon'></span>`);
     }
   }
 
   // Set width, height and margin of each tile
   const $tiles = $('.tile');
   $tiles.css({
-    'height': `${ tilesize }px`,
-    'width': `${ tilesize }px`,
-    'margin': `${ tilespacing }px`,
-    'font-size': `${ tilesize * 0.5 }px`
+    'height': `${ tileSize }px`,
+    'width': `${ tileSize }px`,
+    'margin': `${ tileSpacing }px`,
+    'font-size': `${ tileSize * 0.5 }px`
   });
 
   const $icons = $('.icon');
-  $icons.css({ 'margin-top': `${ tilesize * 0.5 / 2}px`});
-}
+  $icons.css({ 'margin-top': `${ tileSize * 0.5 / 2}px`});
+} // END drawInitialBoard
 
-const clickHandler = function () {
+const tileClickHandler = function () {
   const clickedSquareId = event.srcElement.id
   const $clickedSquare = $('#' + clickedSquareId);
   const row = $clickedSquare.attr('row');
@@ -160,29 +124,50 @@ const clickHandler = function () {
     const playerColor = tictactoe[tictactoe.currentPlayer].color;
     $clickedSquare.css({ 'background-color': playerColor });
         
-    if( tictactoe.checkForWin( playerPiece )) {
-      $('#message').css({ 'display': 'inline' });
-      $('#message').text(`${ tictactoe[tictactoe.currentPlayer].name } has won the game`);
+    if( tictactoe.checkForWin( row, col, playerPiece )) {
+      const $message = $('#gameendmessage');
+      $message.css({ 'display': 'inline' });
+      $message.text(`${ tictactoe[tictactoe.currentPlayer].name } has won the game`);
       tictactoe.gameOver = true;
       return true;
     } else if ( tictactoe.isGameDrawn()) {
-      $('#message').css({ 'display': 'inline' });
-      $('#message').text('The game is a draw');
+      const $message = $('#gameendmessage');
+      $message.css({ 'display': 'inline' });
+      $message.text('The game is a draw');
       tictactoe.gameOver = true;
       return true;
     }
     tictactoe.currentPlayer = tictactoe.currentPlayer === 'player1' ? 'player2' : 'player1';
   }
-}
+} // END tileClickHandler
+
+const restartButtonHandler = function () {
+  tictactoe.initialiseGame();
+
+  // Make the gameendmessage invisible
+  $('#gameendmessage').css({ 'display': 'none' });
+
+  // Reset to the default tile color
+  $('.tile').css({ "background-color": "" });
+
+  // Remove player pieces from the board
+  let $icons = $('.icon');
+  $icons.removeClass( tictactoe.player1.piece );
+  $icons.removeClass( tictactoe.player2.piece );
+
+  tictactoe.currentPlayer = 'player1';
+  tictactoe.gameOver = false;  
+} // END restartButtonHandler
 
 $(function() {
-  const tilesize = 150;
-  const tilespacing = 5;
-
   tictactoe.initialiseGame();
-  drawInitialBoard({ tilesize: tilesize, tilespacing: tilespacing, numCols: tictactoe.cols });
+  drawInitialBoard( tictactoe.rows, tictactoe.cols );
   tictactoe.currentPlayer = 'player1';
   tictactoe.gameOver = false;
 
-  $('.tile').on('click', clickHandler)
+  // Add tile click handler
+  $('.tile').on('click', tileClickHandler);
+
+  // Add restart button handler
+  $('#gamerestart').on('click', restartButtonHandler);
 });
