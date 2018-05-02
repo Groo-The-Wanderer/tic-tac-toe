@@ -20,7 +20,7 @@ h1 {
   margin: 0 50px;
   padding-top: 23px;
   /* margin-top: 0px; */
-  width: 600px;
+  width: 400px;
   text-align: left;
   font-size: 2.4em;
   color: white;
@@ -28,32 +28,74 @@ h1 {
 }
 
 h5 {
-  margin-top: 25px;
-  margin-bottom: 5px;
-  /* color: rgb(104, 104, 104); */
+  margin: 0;
   color: rgb(85, 85, 85);
   font-size: 1em;
 }
 
 #gamespace {
-  width: 480px;
-  height: 100%;
-  margin-top: 0px;
-  margin-bottom: 24px;
-  margin-left: auto;
-  margin-right: auto;
+  width: 80%;
+  height: 600px;
+  margin: 0 auto;
+  display: inline-block;
+}
+
+#scorespace {
+  height: 540px;
+  display: inline-block;
+  position: absolute;
+  margin-right: 25px;
+  margin-top: 60px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  border: 1px solid rgb(105, 105, 105);
+  background-color: rgb(206, 225, 255);
+  font-size: 1em;
+  font-weight: 700;
+  width: 180px;
+}
+
+td {
+  text-align: center;
+  font-size: 0.9em;
+  border: 1px solid rgb(105, 105, 105);
+}
+
+tfoot {
+  background-color: rgb(150, 188, 247);
 }
 
 #gameheader {
-  width: 60%;
-  height: 16px;
+  width: 480px;
+  margin: 5px auto;
+}
+
+#gamefooter {
+  width: 480px;
+  margin: 0 auto;
+}
+
+#gameheadermessage {
+  width: 255px;
+  margin-top: 25px;
   margin-left: 15px;
-  margin-bottom: 10px;
+  display: inline-block;
+}
+
+#gameconfig {
+  display: inline-block;
+  text-align: right;
+  width: 200px;
 }
 
 #gameboard {
   width: 480px;
-  height: 480px;
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
@@ -98,7 +140,7 @@ h5 {
   color: rgb(44, 62, 80);
 }
 
-#gamerestart {
+#restartbutton {
   background-color: rgb(100, 100, 100);
   border: 1px solid rgb(100, 100, 100);
   color: white;
@@ -112,7 +154,24 @@ h5 {
   outline: none;
 }
 
-#gamerestart:hover {
+#restartbutton:hover {
+  background-color: white; /* Green */
+  color: rgb(100, 100, 100);
+}
+
+#configbutton {
+  background-color: rgb(100, 100, 100);
+  border: 1px solid rgb(100, 100, 100);
+  color: white;
+  font-size: 0.6em;
+  border-radius: 5px;
+  text-align: center;
+  height: 16px;
+  margin-right: 10px;
+  outline: none;
+}
+
+#configbutton:hover {
   background-color: white; /* Green */
   color: rgb(100, 100, 100);
 }

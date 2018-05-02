@@ -2,6 +2,7 @@
   rows : 3,
   cols: 3,
   neededToWin: 3,
+  round: 0,
   numMoves: 0,
   maxMoves: 0,
   currentPlayer: '',
@@ -10,11 +11,13 @@
     name: 'Player 1',
     piece: 'fas fa-times',
     color: 'rgb(255, 153, 0)',
+    score: 0,
   },
   player2: {
     name: 'Player 2',
     piece: 'far fa-circle',
     color: 'rgb(0, 153, 51)',
+    score: 0,
   },
 
   initialiseGame: function ( rows, cols ) {
@@ -26,6 +29,9 @@
     }
     this.numMoves = 0;
     this.maxMoves = this.rows * this.cols;
+    this.currentPlayer = 'player1';
+    this.gameOver = false;
+    this.round++;
   }, // END initialiseGame
 
   alreadyFilled: function ( row, col ) {
@@ -75,7 +81,7 @@ const drawInitialBoard = function ( numRows, numCols ) {
   const tileSize = ( gameboardWidth / numCols ) - ( tileSpacing * 2 );
 
   // Set header message
-  $('#gameheader > h5').text(`Match ${ tictactoe.neededToWin } in a row to win`);
+  $('#gameheadermessage > h5').text(`Match ${ tictactoe.neededToWin } in a row to win`);
 
   // Set message div height and width --- this is an overlay of the gameboard
   const $endmessage = $('#gameendmessage');
@@ -108,7 +114,36 @@ const drawInitialBoard = function ( numRows, numCols ) {
 
   const $icons = $('.icon');
   $icons.css({ 'margin-top': `${ tileSize * 0.5 / 2}px`});
+
+  // Initialise score table
+  const player1name = tictactoe.player1.name;
+  const player2name = tictactoe.player2.name;
+  $('#scoretable > thead').append(`<tr><th>#</th><th>${ player1name }</th><th>${ player2name }</th></tr>`);
+  $('#scoretable > tfoot').append(`<tr><td>Total</td><td id="player1score">0</td><td id="player2score">0</td></tr>`);
+  
 } // END drawInitialBoard
+
+const updateScoreTable = function ( winningPlayer ) {
+  const round = tictactoe.round;
+  let player1score = '';
+  let player2score = '';
+
+  if ( winningPlayer === 'player1' || winningPlayer === 'player2' ) {
+    tictactoe[winningPlayer].score++;
+    player1score = winningPlayer === 'player1' ? 1 : '';
+    player2score = winningPlayer === 'player2' ? 1 : '';  
+  } 
+  else {
+    // Game ended in a draw
+    player1score = 'draw';
+    player2score = 'draw';
+  }
+
+  const $scoreTable = $('#scoretable > tbody');
+  $('#scoretable > tbody').append(`<tr><td>${ round }</td><td>${ player1score }</td><td>${ player2score }</td></tr>`);
+  $('#player1score').text( tictactoe.player1.score );
+  $('#player2score').text( tictactoe.player2.score );
+}
 
 const tileClickHandler = function () {
   const clickedSquareId = event.srcElement.id
@@ -125,16 +160,18 @@ const tileClickHandler = function () {
     $clickedSquare.css({ 'background-color': playerColor });
         
     if( tictactoe.checkForWin( row, col, playerPiece )) {
+      const playerName = tictactoe[tictactoe.currentPlayer].name;
       const $message = $('#gameendmessage');
-      $message.css({ 'display': 'inline' });
-      $message.text(`${ tictactoe[tictactoe.currentPlayer].name } has won the game`);
+      $message.css({ 'display': 'inline' }).text(`${ playerName } has won the game`)
       tictactoe.gameOver = true;
+      updateScoreTable ( tictactoe.currentPlayer );
       return true;
     } else if ( tictactoe.isGameDrawn()) {
       const $message = $('#gameendmessage');
-      $message.css({ 'display': 'inline' });
-      $message.text('The game is a draw');
+      $message.css({ 'display': 'inline' }).text('The game is a draw');
       tictactoe.gameOver = true;
+
+      updateScoreTable ();
       return true;
     }
     tictactoe.currentPlayer = tictactoe.currentPlayer === 'player1' ? 'player2' : 'player1';
@@ -154,20 +191,15 @@ const restartButtonHandler = function () {
   let $icons = $('.icon');
   $icons.removeClass( tictactoe.player1.piece );
   $icons.removeClass( tictactoe.player2.piece );
-
-  tictactoe.currentPlayer = 'player1';
-  tictactoe.gameOver = false;  
 } // END restartButtonHandler
 
 $(function() {
   tictactoe.initialiseGame();
   drawInitialBoard( tictactoe.rows, tictactoe.cols );
-  tictactoe.currentPlayer = 'player1';
-  tictactoe.gameOver = false;
 
   // Add tile click handler
   $('.tile').on('click', tileClickHandler);
 
   // Add restart button handler
-  $('#gamerestart').on('click', restartButtonHandler);
+  $('#restartbutton').on('click', restartButtonHandler);
 });

@@ -15,18 +15,31 @@
       <h1>Tic Tac Toe</h1>
     </header>
     <div id="gamespace">
-      <div id="gameheader"><h5></h5></div>
+      <div id="gameheader">
+        <div id="gameheadermessage">
+          <h5></h5>
+        </div>
+        <div id="gameconfig">
+          <button id="configbutton" class="fas fa-cog"></button>
+        </div>          
+      </div>
       <div id="gameboard">
-        <div id="gameendmessage"></div>
+        <div id="gameendmessage"></div>      
       </div>
-      <div id="restartbutton">
-        <button id="gamerestart">Restart</button>
-      </div>
+      <div id="gamefooter">
+        <button id="restartbutton">Restart</button>
+      </div>  
+    </div>
+    <div id="scorespace">
+      <table id="scoretable">
+        <thead></thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table>
     </div>
     <footer>
       <p>Game by Brendan Leonard</p>
       <div id="byline">WDi27 PROJECT[0]<img src="img/ga-logo.png"></div>
-      <!-- <div><img src="img/ga-logo.png"></div> -->
     </footer>      
   </div>
 </body>
