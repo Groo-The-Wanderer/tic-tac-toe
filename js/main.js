@@ -7,6 +7,9 @@
   maxMoves: 0,
   currentPlayer: '',
   gameOver: false,
+  tournamentRounds: 3,
+  tournamentOver: false,
+  confettiDuration: 5000,
   player1: { 
     name: 'Player 1',
     piece: 'fas fa-times',
@@ -31,6 +34,7 @@
     this.maxMoves = this.rows * this.cols;
     this.currentPlayer = 'player1';
     this.gameOver = false;
+    this.tournamentOver = false;
     this.round++;
   }, // END initialiseGame
 
@@ -83,7 +87,7 @@ const drawInitialBoard = function ( numRows, numCols ) {
   // Set header message
   $('#gameheadermessage > h5').text(`Match ${ tictactoe.neededToWin } in a row to win`);
 
-  // Set message div height and width --- this is an overlay of the gameboard
+  // Set endmessage div height and width --- this is an overlay of the gameboard
   const $endmessage = $('#gameendmessage');
   const paddingTop = ( gameboardWidth / 2 ) - 60;
   const paddingLeftRight = 30;
@@ -116,34 +120,65 @@ const drawInitialBoard = function ( numRows, numCols ) {
   $icons.css({ 'margin-top': `${ tileSize * 0.5 / 2}px`});
 
   // Initialise score table
+  const tournamentRounds = tictactoe.tournamentRounds;
+  $('#scoreheadermessage > h5').text(`Best of ${ tournamentRounds } ${ tournamentRounds === 1 ? ' round' : ' rounds' } Tournament`)
   const player1name = tictactoe.player1.name;
   const player2name = tictactoe.player2.name;
   $('#scoretable > thead').append(`<tr><th>#</th><th>${ player1name }</th><th>${ player2name }</th></tr>`);
   $('#scoretable > tfoot').append(`<tr><td>Total</td><td id="player1score">0</td><td id="player2score">0</td></tr>`);
-  
 } // END drawInitialBoard
 
 const updateScoreTable = function ( winningPlayer ) {
   const round = tictactoe.round;
-  let player1score = '';
-  let player2score = '';
+  let player1score = 'draw';
+  let player2score = 'draw';
 
+  // Determine scoring for the current round
   if ( winningPlayer === 'player1' || winningPlayer === 'player2' ) {
     tictactoe[winningPlayer].score++;
     player1score = winningPlayer === 'player1' ? 1 : '';
     player2score = winningPlayer === 'player2' ? 1 : '';  
-  } 
-  else {
-    // Game ended in a draw
-    player1score = 'draw';
-    player2score = 'draw';
   }
 
-  const $scoreTable = $('#scoretable > tbody');
+  // Update round score in table  
   $('#scoretable > tbody').append(`<tr><td>${ round }</td><td>${ player1score }</td><td>${ player2score }</td></tr>`);
+
+  // Update total score in table footer
   $('#player1score').text( tictactoe.player1.score );
   $('#player2score').text( tictactoe.player2.score );
-}
+
+  // Tournament winner
+  let tournamentWinner = '';
+  let tournamentWinnerName = '';
+
+  if ( round === tictactoe.tournamentRounds ) {
+    tictactoe.tournamentOver = true;
+
+    if ( tictactoe.player1.score === tictactoe.player2.score ) {
+      // Update tournament winner message
+      $('#scorefooter > h2').text('The tournament ended in a draw');
+    } else {
+      tournamentWinner = tictactoe.player1.score > tictactoe.player2.score ? 'player1' : 'player2';
+      tournamentWinnerName = tictactoe[tournamentWinner].name;
+
+      // Update tournament winner message
+      $('#scorefooter > h2').text(`${ tournamentWinnerName } has WON the tournament`);
+
+      // Display confetti animation
+      const mp = 150;
+      const particleColors = {
+            colorOptions: ["DodgerBlue", "OliveDrab", "Gold", "pink", "SlateBlue", "lightblue", "Violet", "PaleGreen", "SteelBlue", "SandyBrown", "Chocolate", "Crimson"],
+            colorIndex: 0,
+            colorIncrementer: 0,
+            colorThreshold: 10
+      }
+
+      // Run confetti animation
+      $.confetti.start();
+      setTimeout( function() { $.confetti.stop(); }, tictactoe.confettiDuration );
+    }
+  }
+} // END updateScoreTable
 
 const tileClickHandler = function () {
   const clickedSquareId = event.srcElement.id
@@ -161,16 +196,13 @@ const tileClickHandler = function () {
         
     if( tictactoe.checkForWin( row, col, playerPiece )) {
       const playerName = tictactoe[tictactoe.currentPlayer].name;
-      const $message = $('#gameendmessage');
-      $message.css({ 'display': 'inline' }).text(`${ playerName } has won the game`)
+      $('#gameendmessage').css({ 'display': 'inline' }).text(`${ playerName } has won the game`)
       tictactoe.gameOver = true;
       updateScoreTable ( tictactoe.currentPlayer );
       return true;
     } else if ( tictactoe.isGameDrawn()) {
-      const $message = $('#gameendmessage');
-      $message.css({ 'display': 'inline' }).text('The game is a draw');
+      $('#gameendmessage').css({ 'display': 'inline' }).text('The game is a draw');
       tictactoe.gameOver = true;
-
       updateScoreTable ();
       return true;
     }
@@ -179,6 +211,25 @@ const tileClickHandler = function () {
 } // END tileClickHandler
 
 const restartButtonHandler = function () {
+  // If round was abandoned we don't count the round
+  if ( !tictactoe.gameOver ){
+    tictactoe.round--;
+  }
+
+  // If tournament is over we blitz the score table
+  if ( tictactoe.tournamentOver ) {
+    $('#scoretable > tbody').empty();
+    $('#scorefooter > h2').empty();
+
+    // Reset the round counter to 0
+    tictactoe.round = 0;
+
+    // Reset player scores to 0
+    tictactoe.player1.score = 0;
+    tictactoe.player2.score = 0;
+  }
+
+  // Now initialise everything in the game object
   tictactoe.initialiseGame();
 
   // Make the gameendmessage invisible
