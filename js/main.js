@@ -1,6 +1,6 @@
  const tictactoe = {
-  rows : 5,
-  cols: 5,
+  rows : 3,
+  cols: 3,
   neededToWin: 3,
   round: 0,
   numMoves: 0,
@@ -61,16 +61,32 @@
     let colCount = 0;
     let diagCount = 0;
     let revDiagCount = 0;
-    let prevPiece = '';
-    let winCount = this.neededToWin;
+    let neededToWin = this.neededToWin;
+    let checkCol = 0;
+
+    row = parseInt(row);
+    col = parseInt(col);
 
     for ( let i = 1; i <= this.cols; i++ ) {
+      // Check column that latest played piece is part of
       colCount += this[row][i] === piece ? 1 : ( colCount * -1 );
-      rowCount += this[i][col] === piece ? 1 : ( rowCount * -1 );
-      diagCount += this[i][i] === piece ? 1 : ( diagCount * -1 );
-      revDiagCount += this[i][this.cols - i + 1] === piece ? 1 : ( revDiagCount * -1 );
 
-      if (( rowCount === winCount ) || ( colCount === winCount ) || ( diagCount === winCount ) || ( revDiagCount === winCount )) {
+      // Check row that latest played piece is part of
+      rowCount += this[i][col] === piece ? 1 : ( rowCount * -1 );
+
+      // Check diagonal running top left to bottom right
+      checkCol = col - row + i;
+      if ( checkCol > 0 && checkCol <= this.cols ) {
+        diagCount += this[i][checkCol] === piece ? 1 : ( diagCount * -1 );
+      }
+
+      // Check reverse diagonal running top right to bottom left
+      checkCol = row + col - i;
+      if ( checkCol > 0 && checkCol <= this.cols ) {
+        revDiagCount += this[i][checkCol] === piece ? 1 : ( revDiagCount * -1 );
+      }
+
+      if (( rowCount === neededToWin ) || ( colCount === neededToWin ) || ( diagCount === neededToWin ) || ( revDiagCount === neededToWin )) {
         return true;
       }
     }
@@ -81,7 +97,7 @@
 const drawInitialBoard = function ( numRows, numCols ) {
   const $gameboard = $('#gameboard');
   const gameboardWidth = parseInt($gameboard.width());
-  const tileSpacing = 5;
+  const tileSpacing = 3;
   const tileSize = ( gameboardWidth / numCols ) - ( tileSpacing * 2 );
 
   // Set header message
