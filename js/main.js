@@ -1,15 +1,14 @@
  const tictactoe = {
-  rows : 3,
-  cols: 3,
+  rows : 5,
+  cols: 5,
   neededToWin: 3,
   round: 0,
   numMoves: 0,
   maxMoves: 0,
   currentPlayer: '',
   gameOver: false,
-  tournamentRounds: 3,
+  tournamentRounds: 10,
   tournamentOver: false,
-  confettiDuration: 5000,
   player1: { 
     name: 'Player 1',
     piece: 'fas fa-times',
@@ -62,14 +61,15 @@
     let colCount = 0;
     let diagCount = 0;
     let revDiagCount = 0;
+    let prevPiece = '';
     let winCount = this.neededToWin;
 
     for ( let i = 1; i <= this.cols; i++ ) {
-      rowCount += this[row][i] === piece ? 1 : 0;
-      colCount += this[i][col] === piece ? 1 : 0;
-      diagCount += this[i][i] === piece ? 1 : 0;
-      revDiagCount += this[i][winCount - i + 1] === piece ? 1 : 0;
-    
+      colCount += this[row][i] === piece ? 1 : ( colCount * -1 );
+      rowCount += this[i][col] === piece ? 1 : ( rowCount * -1 );
+      diagCount += this[i][i] === piece ? 1 : ( diagCount * -1 );
+      revDiagCount += this[i][this.cols - i + 1] === piece ? 1 : ( revDiagCount * -1 );
+
       if (( rowCount === winCount ) || ( colCount === winCount ) || ( diagCount === winCount ) || ( revDiagCount === winCount )) {
         return true;
       }
@@ -85,7 +85,7 @@ const drawInitialBoard = function ( numRows, numCols ) {
   const tileSize = ( gameboardWidth / numCols ) - ( tileSpacing * 2 );
 
   // Set header message
-  $('#gameheadermessage > h5').text(`Match ${ tictactoe.neededToWin } in a row to win`);
+  $('#gameheadermessage > h6').text(`Match ${ tictactoe.neededToWin } in a row to win`);
 
   // Set endmessage div height and width --- this is an overlay of the gameboard
   const $endmessage = $('#gameendmessage');
@@ -131,7 +131,7 @@ const setupScoreTable = function () {
 
   // Initialise score table
   const tournamentRounds = tictactoe.tournamentRounds;
-  $('#scoreheadermessage > h5').text(`Best of ${ tournamentRounds } ${ tournamentRounds === 1 ? ' round' : ' rounds' } Tournament`)
+  $('#scoreheadermessage > h6').text(`Best of ${ tournamentRounds } ${ tournamentRounds === 1 ? ' round' : ' rounds' } Tournament`)
   const player1name = tictactoe.player1.name;
   const player2name = tictactoe.player2.name;
   $('#scoretable > thead').append(`<tr><th>#</th><th>${ player1name }</th><th>${ player2name }</th></tr>`);
@@ -165,6 +165,7 @@ const updateScoreTable = function ( winningPlayer ) {
   let tournamentWinnerName = '';
 
   if ( round === tictactoe.tournamentRounds ) {
+    const confettiDuration = 5000;
     tictactoe.tournamentOver = true;
 
     if ( tictactoe.player1.score === tictactoe.player2.score ) {
@@ -257,6 +258,14 @@ const restartButtonHandler = function () {
   $icons.removeClass( tictactoe.player2.piece );
 } // END restartButtonHandler
 
+const configButtonHander = function () {
+  $('#configform').css({ 'display': 'block' });
+
+  $('#closeconfig').on('click', function() {
+    $('#configform').css({ 'display': 'none' });
+  });
+}
+
 $(function() {
   tictactoe.initialiseGame();
   drawInitialBoard( tictactoe.rows, tictactoe.cols );
@@ -266,4 +275,7 @@ $(function() {
 
   // Add restart button handler
   $('#restartbutton').on('click', restartButtonHandler);
+
+  // Add config button handler
+  $('#configbutton').on('click', configButtonHander);
 });

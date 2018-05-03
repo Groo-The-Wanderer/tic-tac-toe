@@ -17,14 +17,26 @@
     <div id="gamespace">
       <div id="gameheader">
         <div id="gameheadermessage">
-          <h5></h5>
+          <h6></h6>
         </div>
         <div id="gameconfig">
           <button id="configbutton" class="fas fa-cog"></button>
         </div>          
       </div>
       <div id="gameboard">
-        <div id="gameendmessage"></div>      
+        <div id="gameendmessage"></div>
+          <!-- The Modal -->
+          <div id="configform" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+              <span id="closeconfig" class="close">&times;</span>
+              <p>Tic Tac Toe Settings</p>
+              <p>Player 1 Name:</p>
+              <input type="text" id="player1name" style="display: block">
+              <p>Player 2 Name:</p>              
+              <input type="text" id="player2name" style="display: block">
+            </div>
+          </div>   
       </div>
       <div id="gamefooter">
         <button id="restartbutton">Restart</button>
@@ -33,7 +45,7 @@
     <div id="scorespace">
       <div id="scoreheader">
         <div id="scoreheadermessage">
-          <h5></h5>
+          <h6></h6>
         </div>
       </div>
       <div id="scoretablespace">
