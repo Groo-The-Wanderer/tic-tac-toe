@@ -119,6 +119,16 @@ const drawInitialBoard = function ( numRows, numCols ) {
   const $icons = $('.icon');
   $icons.css({ 'margin-top': `${ tileSize * 0.5 / 2}px`});
 
+  // Setup an empty score table
+  setupScoreTable();
+} // END drawInitialBoard
+
+const setupScoreTable = function () {
+  // Empty the score table if needed
+  const $scoreTable = $('#scoretable');
+  $scoreTable.empty();
+  $scoreTable.append('<thead></thead>').append('<tbody></tbody>').append('<tfoot></tfoot>');
+
   // Initialise score table
   const tournamentRounds = tictactoe.tournamentRounds;
   $('#scoreheadermessage > h5').text(`Best of ${ tournamentRounds } ${ tournamentRounds === 1 ? ' round' : ' rounds' } Tournament`)
@@ -126,7 +136,10 @@ const drawInitialBoard = function ( numRows, numCols ) {
   const player2name = tictactoe.player2.name;
   $('#scoretable > thead').append(`<tr><th>#</th><th>${ player1name }</th><th>${ player2name }</th></tr>`);
   $('#scoretable > tfoot').append(`<tr><td>Total</td><td id="player1score">0</td><td id="player2score">0</td></tr>`);
-} // END drawInitialBoard
+
+  // Reset the footer message
+  $('#scorefooter > h2').empty();
+} // END setupScoreTable
 
 const updateScoreTable = function ( winningPlayer ) {
   const round = tictactoe.round;
@@ -174,14 +187,14 @@ const updateScoreTable = function ( winningPlayer ) {
       }
 
       // Run confetti animation
-      $.confetti.start();
+      $.confetti.restart();
       setTimeout( function() { $.confetti.stop(); }, tictactoe.confettiDuration );
     }
   }
 } // END updateScoreTable
 
 const tileClickHandler = function () {
-  const clickedSquareId = event.srcElement.id
+  const clickedSquareId =  this.id;
   const $clickedSquare = $('#' + clickedSquareId);
   const row = $clickedSquare.attr('row');
   const col = $clickedSquare.attr('col');
@@ -218,8 +231,8 @@ const restartButtonHandler = function () {
 
   // If tournament is over we blitz the score table
   if ( tictactoe.tournamentOver ) {
-    $('#scoretable > tbody').empty();
-    $('#scorefooter > h2').empty();
+    // Reset the score table
+    setupScoreTable();
 
     // Reset the round counter to 0
     tictactoe.round = 0;
