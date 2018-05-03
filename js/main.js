@@ -1,11 +1,11 @@
  const tictactoe = {
-  rows : 3,
-  cols: 3,
+  rows : 4,
+  cols: 4,
   neededToWin: 3,
   round: 0,
   numMoves: 0,
   maxMoves: 0,
-  currentPlayer: '',
+  currentPlayer: 'player1',
   gameOver: false,
   tournamentRounds: 10,
   tournamentOver: false,
@@ -31,7 +31,7 @@
     }
     this.numMoves = 0;
     this.maxMoves = this.rows * this.cols;
-    this.currentPlayer = 'player1';
+    // this.currentPlayer = 'player1';
     this.gameOver = false;
     this.tournamentOver = false;
     this.round++;
@@ -146,16 +146,27 @@ const setupScoreTable = function () {
   $scoreTable.append('<thead></thead>').append('<tbody></tbody>').append('<tfoot></tfoot>');
 
   // Initialise score table
-  const tournamentRounds = tictactoe.tournamentRounds;
-  $('#scoreheadermessage > h6').text(`Best of ${ tournamentRounds } ${ tournamentRounds === 1 ? ' round' : ' rounds' } Tournament`)
-  const player1name = tictactoe.player1.name;
-  const player2name = tictactoe.player2.name;
-  $('#scoretable > thead').append(`<tr><th>#</th><th>${ player1name }</th><th>${ player2name }</th></tr>`);
+  updateScoreTableHeader ();
   $('#scoretable > tfoot').append(`<tr><td>Total</td><td id="player1score">0</td><td id="player2score">0</td></tr>`);
 
   // Reset the footer message
   $('#scorefooter > h2').empty();
 } // END setupScoreTable
+
+const updateScoreTableHeader = function () {
+  const tournamentRounds = tictactoe.tournamentRounds;
+
+  // Update message that appears above the score table
+  $('#scoreheadermessage > h6').text(`Best of ${ tournamentRounds } ${ tournamentRounds === 1 ? ' round' : ' rounds' } Tournament`)
+
+  // Remove the table header
+  $('#scoretable > thead').empty();
+
+  // Reset the table header player names
+  const player1name = tictactoe.player1.name;
+  const player2name = tictactoe.player2.name;
+  $('#scoretable > thead').append(`<tr><th>#</th><th>${ player1name }</th><th>${ player2name }</th></tr>`);
+} // END updateScoreTableHeader
 
 const updateScoreTable = function ( winningPlayer ) {
   const round = tictactoe.round;
@@ -229,13 +240,18 @@ const tileClickHandler = function () {
       $('#gameendmessage').css({ 'display': 'inline' }).text(`${ playerName } has won the game`)
       tictactoe.gameOver = true;
       updateScoreTable ( tictactoe.currentPlayer );
+      // Game has been won - toggle players for the next round
+      tictactoe.currentPlayer = tictactoe.currentPlayer === 'player1' ? 'player2' : 'player1';
       return true;
     } else if ( tictactoe.isGameDrawn()) {
       $('#gameendmessage').css({ 'display': 'inline' }).text('The game is a draw');
       tictactoe.gameOver = true;
       updateScoreTable ();
+      // Game has been drawn - toggle players for the next round
+      tictactoe.currentPlayer = tictactoe.currentPlayer === 'player1' ? 'player2' : 'player1';
       return true;
     }
+    // Game is in progress - toggle players for the next turn
     tictactoe.currentPlayer = tictactoe.currentPlayer === 'player1' ? 'player2' : 'player1';
   }
 } // END tileClickHandler
@@ -274,12 +290,35 @@ const restartButtonHandler = function () {
   $icons.removeClass( tictactoe.player2.piece );
 } // END restartButtonHandler
 
-const configButtonHander = function () {
+const configButtonHandler = function () {
   $('#configform').css({ 'display': 'block' });
 
   $('#closeconfig').on('click', function() {
     $('#configform').css({ 'display': 'none' });
   });
+}
+
+const configSaveButtonHandler = function () {
+  const player1name = $('#player1name').val();
+  const player2name = $('#player2name').val();
+  let nameChange = false;
+
+  if ( player1name != '' ) {
+    tictactoe.player1.name = player1name;
+    nameChange = true;
+  }
+
+  if ( player2name != '' ) {
+    tictactoe.player2.name = player2name;
+    nameChange = true;
+  }
+
+  if ( nameChange ) {
+    updateScoreTableHeader();
+  }
+
+  // Close the modal form
+
 }
 
 $(function() {
@@ -293,5 +332,8 @@ $(function() {
   $('#restartbutton').on('click', restartButtonHandler);
 
   // Add config button handler
-  $('#configbutton').on('click', configButtonHander);
+  $('#configbutton').on('click', configButtonHandler);
+
+  // Add config save button handler
+  $('#configSaveButton').on('click', configSaveButtonHandler);  
 });
