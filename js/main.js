@@ -212,7 +212,7 @@ const updateScoreTable = function ( winningPlayer ) {
 
       // Run confetti animation
       $.confetti.restart();
-      setTimeout( function() { $.confetti.stop(); }, tictactoe.confettiDuration );
+      setTimeout( function() { $.confetti.stop(); }, confettiDuration );      
     }
   }
 } // END updateScoreTable
