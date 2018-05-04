@@ -296,7 +296,7 @@ footer p {
 /* Modal Content/Box */
 .modal-content {
   background-color: #fefefe;
-  margin: 18% 24%; /* 15% from the top and centered */
+  margin: 15% 24%; /* 15% from the top and centered */
   padding: 10px;
   border: 1px solid #888;
   width: 20%; /* Could be more or less, depending on screen size */

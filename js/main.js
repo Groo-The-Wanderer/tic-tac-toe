@@ -31,7 +31,6 @@
     }
     this.numMoves = 0;
     this.maxMoves = this.rows * this.cols;
-    // this.currentPlayer = 'player1';
     this.gameOver = false;
     this.tournamentOver = false;
     this.round++;
@@ -112,7 +111,7 @@ const drawInitialBoard = function ( numRows, numCols ) {
     'padding': `${ paddingTop }px ${ paddingLeftRight }px 0`,
     'width': `${ gameboardWidth - ( paddingLeftRight * 2 ) }px`
   });
-    
+
   for ( i = 1; i <= numRows; i++ ) {    
     for ( j = 1; j <= numCols; j++ ) {
       let tileId = `tile${ i }-${ j }`;
@@ -134,9 +133,6 @@ const drawInitialBoard = function ( numRows, numCols ) {
 
   const $icons = $('.icon');
   $icons.css({ 'margin-top': `${ tileSize * 0.5 / 2}px`});
-
-  // Setup an empty score table
-  setupScoreTable();
 } // END drawInitialBoard
 
 const setupScoreTable = function () {
@@ -242,6 +238,8 @@ const tileClickHandler = function () {
       updateScoreTable ( tictactoe.currentPlayer );
       // Game has been won - toggle players for the next round
       tictactoe.currentPlayer = tictactoe.currentPlayer === 'player1' ? 'player2' : 'player1';
+      // Disable config button handler
+      $('#configbutton').prop('disabled', true);
       return true;
     } else if ( tictactoe.isGameDrawn()) {
       $('#gameendmessage').css({ 'display': 'inline' }).text('The game is a draw');
@@ -249,9 +247,11 @@ const tileClickHandler = function () {
       updateScoreTable ();
       // Game has been drawn - toggle players for the next round
       tictactoe.currentPlayer = tictactoe.currentPlayer === 'player1' ? 'player2' : 'player1';
+      // Disable config button handler
+      $('#configbutton').prop('disabled', true);
       return true;
     }
-    // Game is in progress - toggle players for the next turn
+    // Game is in progress - toggle players for the next turn in current game
     tictactoe.currentPlayer = tictactoe.currentPlayer === 'player1' ? 'player2' : 'player1';
   }
 } // END tileClickHandler
@@ -288,43 +288,83 @@ const restartButtonHandler = function () {
   let $icons = $('.icon');
   $icons.removeClass( tictactoe.player1.piece );
   $icons.removeClass( tictactoe.player2.piece );
+
+  // Enable config button
+  $('#configbutton').prop('disabled', false);
 } // END restartButtonHandler
 
 const configButtonHandler = function () {
   $('#configform').css({ 'display': 'block' });
 
-  $('#closeconfig').on('click', function() {
-    $('#configform').css({ 'display': 'none' });
-  });
-}
+  // Set screen defaults
+  $('#player1name').val(tictactoe.player1.name);
+  $('#player2name').val(tictactoe.player2.name);
+  $('#gridsize').val(String(tictactoe.cols));
+  $('#winsize').val(String(tictactoe.neededToWin));
+} // END configButtonHandler
 
 const configSaveButtonHandler = function () {
-  const player1name = $('#player1name').val();
-  const player2name = $('#player2name').val();
   let nameChange = false;
+  let gridChange = false;
+  let winChange = false;
 
-  if ( player1name != '' ) {
+  const player1name = $('#player1name').val().trim();
+  const player2name = $('#player2name').val().trim();
+  const gridSize = Number( $('#gridsize').val() );
+  const winSize = Number( $('#winsize').val() );
+
+  // Player name changes
+  if ( player1name != '' && player1name != tictactoe.player1.name ) {
     tictactoe.player1.name = player1name;
     nameChange = true;
   }
 
-  if ( player2name != '' ) {
+  if ( player2name != '' && player2name != tictactoe.player2.name ) {
     tictactoe.player2.name = player2name;
     nameChange = true;
+  }
+
+  // Grid size changes
+  if ( gridSize != tictactoe.cols ) {
+    tictactoe.cols = gridSize;
+    tictactoe.rows = gridSize;
+    gridChange = true;
+  }
+
+  // Win size changes
+  if ( winSize != tictactoe.neededToWin ) {
+    tictactoe.neededToWin = winSize;
+    winChange = true;
   }
 
   if ( nameChange ) {
     updateScoreTableHeader();
   }
 
+  if ( gridChange || winChange ) {
+    $('.tile').remove();
+    tictactoe.initialiseGame();
+    tictactoe.round = 1;
+    tictactoe.currentPlayer = 'player1';
+    tictactoe.player1.score = 0;
+    tictactoe.player2.score = 0;
+    drawInitialBoard( tictactoe.rows, tictactoe.cols );
+    setupScoreTable();
+    setupClickHandlers();
+    setupConfigButton();
+  }
+
   // Close the modal form
+  $('#closeconfig').trigger('click');
+} // END configButtonSaveHandler
 
-}
+const setupConfigButton = function () {
+  $('#closeconfig').on('click', function() {
+    $('#configform').css({ 'display': 'none' });
+  });
+} // END setupConfigButton
 
-$(function() {
-  tictactoe.initialiseGame();
-  drawInitialBoard( tictactoe.rows, tictactoe.cols );
-
+const setupClickHandlers = function () {
   // Add tile click handler
   $('.tile').on('click', tileClickHandler);
 
@@ -336,4 +376,17 @@ $(function() {
 
   // Add config save button handler
   $('#configSaveButton').on('click', configSaveButtonHandler);  
+
+  // Add config close button handler
+  setupConfigButton();
+}
+
+$(function() {
+  tictactoe.initialiseGame();
+  drawInitialBoard( tictactoe.rows, tictactoe.cols );
+  // Setup an empty score table
+  setupScoreTable();
+
+  // Add button handlers
+  setupClickHandlers();
 });
