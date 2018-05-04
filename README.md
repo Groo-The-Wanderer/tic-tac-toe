@@ -24,15 +24,16 @@ The key twist on the classic with this game is that the grid size can vary; as c
 * The winning line can be configured to any number of contiguous pieces in a row but will default to 3. Therefore, if playing in the default configuration the first player to place his or her piece 3 times in a row that runs either vertically, horizontally or across any of the available diagonals is the winner
 * When a game is over (via a win or a draw) the winner is announced on a screen that overlays the game board. In order to play another game the Restart button must be pressed to clear the winner announcement and reset the game grid
   * Whilst the winner announcement is visible the config button is disabled (see below for config button information)
-* The game is played tournament style with the default being 3 rounds. There is a score table to the right of the game grid that keeps a tally
+* The game is played tournament style with the default being 5 rounds. There is a score table to the right of the game grid that keeps a tally
 * Tournament points are awarded as 1 for a win, 0 for a loss or draw - draws are fairly common by the way
 * The winner of the tournament is announced with fanfare and confetti raining down for 5 seconds
 * If a round is abandoned (i.e. the Restart button is used before the game ends in a win or draw) a tournament score for that round isn't recorded
-* The starting player for each game toggles - so play an even number of games and both players start the same number of games each
+* The starting player for each game toggles - so playing an even number of games will result in both players getting an equal number of games where they make the starting move
 * The config button (a little cog icon) appears above the game grid to the right. The config button will display a config popup that can be used to:
   * *Change the name of each player*. After saving the config the score table is updated as will future game and tournament win announcements
   * *Change the grid size*. After saving, the grid redraws, the score tally table is reset and the tournament restarts from round 1
   * *Change the winning combination size*. After saving the number of contiguous tiles to win the game is adjusted, the grid redraws, the score tally table is reset and the tournament restarts from round 1
+  * *Change the number of games in a tournament*. After saving, the tournament is reset and will run for the configured number of rounds
   
 ### Notes regarding Tournament Play
 
