@@ -7,7 +7,8 @@
   4. GAME space styles including game board and elements around the board
   5. SCORE space styles including score table and elements around the table
   6. Button styles for various buttons
-  7. FOOTER styles for footer across whole page  
+  7. FOOTER styles for footer across whole page
+  8. CONFIG form styling (for the modal config form popup)
 */
 
 /* BODY and WRAPPER div -- surrounds all content */
@@ -273,12 +274,8 @@ footer p {
   padding-right: 2px;
 }
 /* { end } FOOTER styling */
-/* { end } CSS */
-
-
 
 /* FORM STYLING */
-
 /* The Modal (background) */
 .modal {
   display: none; /* Hidden by default */
@@ -296,10 +293,10 @@ footer p {
 /* Modal Content/Box */
 .modal-content {
   background-color: #fefefe;
-  margin: 15% 24%; /* 15% from the top and centered */
+  margin: 15% 24%;
   padding: 10px;
   border: 1px solid #888;
-  width: 20%; /* Could be more or less, depending on screen size */
+  width: 20%;
 }
 
 /* The Close Button */
@@ -316,6 +313,5 @@ footer p {
   text-decoration: none;
   cursor: pointer;
 }
-
-
 /* { end } FORM STYLING */
+/* { end } CSS */

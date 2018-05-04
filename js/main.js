@@ -7,7 +7,7 @@
   maxMoves: 0,
   currentPlayer: 'player1',
   gameOver: false,
-  tournamentRounds: 10,
+  tournamentRounds: 5,
   tournamentOver: false,
   player1: { 
     name: 'Player 1',
@@ -93,7 +93,7 @@
   }, // END checkForWin
  }
 
-const drawInitialBoard = function ( numRows, numCols ) {
+const drawBoard = function ( numRows, numCols ) {
   const $gameboard = $('#gameboard');
   const gameboardWidth = parseInt($gameboard.width());
   const tileSpacing = 3;
@@ -133,7 +133,7 @@ const drawInitialBoard = function ( numRows, numCols ) {
 
   const $icons = $('.icon');
   $icons.css({ 'margin-top': `${ tileSize * 0.5 / 2}px`});
-} // END drawInitialBoard
+} // END drawBoard
 
 const setupScoreTable = function () {
   // Empty the score table if needed
@@ -301,17 +301,20 @@ const configButtonHandler = function () {
   $('#player2name').val(tictactoe.player2.name);
   $('#gridsize').val(String(tictactoe.cols));
   $('#winsize').val(String(tictactoe.neededToWin));
+  $('#tournamentrounds').val(String(tictactoe.tournamentRounds));
 } // END configButtonHandler
 
 const configSaveButtonHandler = function () {
   let nameChange = false;
   let gridChange = false;
   let winChange = false;
+  let roundsChange = false;
 
   const player1name = $('#player1name').val().trim();
   const player2name = $('#player2name').val().trim();
   const gridSize = Number( $('#gridsize').val() );
   const winSize = Number( $('#winsize').val() );
+  const tournamentRounds = Number( $('#tournamentrounds').val() );
 
   // Player name changes
   if ( player1name != '' && player1name != tictactoe.player1.name ) {
@@ -337,18 +340,24 @@ const configSaveButtonHandler = function () {
     winChange = true;
   }
 
+  // Tournament rounds change
+  if ( tournamentRounds != tictactoe.tournamentRounds ) {
+    tictactoe.tournamentRounds = tournamentRounds;
+    roundsChange = true;
+  }
+
   if ( nameChange ) {
     updateScoreTableHeader();
   }
 
-  if ( gridChange || winChange ) {
+  if ( gridChange || winChange || roundsChange ) {
     $('.tile').remove();
     tictactoe.initialiseGame();
     tictactoe.round = 1;
     tictactoe.currentPlayer = 'player1';
     tictactoe.player1.score = 0;
     tictactoe.player2.score = 0;
-    drawInitialBoard( tictactoe.rows, tictactoe.cols );
+    drawBoard( tictactoe.rows, tictactoe.cols );
     setupScoreTable();
     setupClickHandlers();
     setupConfigButton();
@@ -383,7 +392,7 @@ const setupClickHandlers = function () {
 
 $(function() {
   tictactoe.initialiseGame();
-  drawInitialBoard( tictactoe.rows, tictactoe.cols );
+  drawBoard( tictactoe.rows, tictactoe.cols );
   // Setup an empty score table
   setupScoreTable();
 
